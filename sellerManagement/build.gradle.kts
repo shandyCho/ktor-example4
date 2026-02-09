@@ -1,0 +1,24 @@
+val exposed_version: String by project
+val h2_version: String by project
+val koin_version: String by project
+val kotlin_version: String by project
+val logback_version: String by project
+val postgres_version: String by project
+
+plugins {
+    kotlin("jvm") version "2.3.0"
+    id("io.ktor.plugin") version "3.4.0"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.0"
+}
+
+application {
+    mainClass = "io.ktor.server.netty.EngineMain"
+}
+
+kotlin {
+    jvmToolchain(21)
+}
+
+dependencies {
+
+}
