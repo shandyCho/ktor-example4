@@ -20,8 +20,8 @@ import org.koin.logger.slf4jLogger
 fun Application.configureDatabases() {
     val database = Database.connect(
         url = "jdbc:postgresql://192.168.16.1:5432/postgres",
-        user = "postgres",
-        password = "",
+        user = "test",
+        password = "sikbbang2@",
     )
     val dbConnection: Connection = connectToPostgres(embedded = true)
     val cityService = CityService(dbConnection)

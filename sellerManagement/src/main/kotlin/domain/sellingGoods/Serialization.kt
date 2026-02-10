@@ -2,6 +2,7 @@ package com.shandy.domain.sellingGoods
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.*
+import com.shandy.domain.sellingGoods.dto.NewSellingGoodsDTO
 import com.shandy.domain.sellingGoods.dto.SellingGoods
 import com.shandy.domain.sellingGoods.dto.SellingGoodsUUIDStringfy
 import com.shandy.domain.sellingGoods.repository.FakeSellingGoodsRepository
@@ -62,8 +63,9 @@ fun Application.configureSerialization(repository: SellingGoodsRepository) {
             }
             post {
                 try {
-                    val good = call.receive<SellingGoods>()
-                    repository.addSellingGoods(good)
+                    val good = call.receive<NewSellingGoodsDTO>()
+                    val tmp = SellingGoods(Uuid.random(), good.goodsName, good.goodsPrice)
+                    repository.addSellingGoods(tmp)
                     call.respond(HttpStatusCode.OK)
                 } catch (e: IllegalStateException) {
                     call.respond(HttpStatusCode.BadRequest)

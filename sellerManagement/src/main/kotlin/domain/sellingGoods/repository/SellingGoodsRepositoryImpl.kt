@@ -5,6 +5,7 @@ import com.shandy.domain.sellingGoods.model.SellingGoodsDAO
 import com.shandy.domain.sellingGoods.model.SellingGoodsTable
 import com.shandy.domain.sellingGoods.model.daoToModel
 import com.shandy.domain.sellingGoods.model.suspendedTransaction
+import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.eq
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -28,7 +29,11 @@ class SellingGoodsRepositoryImpl: SellingGoodsRepository {
     }
 
     override suspend fun sellingGoodsByName(name: String): List<SellingGoods> {
-        TODO("todo")
+        return suspendedTransaction {
+            SellingGoodsDAO
+                .find{ (SellingGoodsTable.goodsName eq name) }
+                .map(::daoToModel)
+        }
     }
 
     override suspend fun addSellingGoods(sellingGoods: SellingGoods) {

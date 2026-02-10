@@ -14,8 +14,8 @@ import kotlin.uuid.Uuid
 
 object SellingGoodsTable: UuidTable("selling_goods") {
 //    val id = uuid("id").entityId()
-    val goodsName = varchar("goodsName", 255)
-    val goodsPrice = integer("goodsPrice")
+    val goodsName = varchar("goods_name", 255)
+    val goodsPrice = integer("goods_price")
 }
 
 
