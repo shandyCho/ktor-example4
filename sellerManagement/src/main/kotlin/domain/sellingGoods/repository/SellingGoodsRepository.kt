@@ -15,5 +15,6 @@ interface SellingGoodsRepository {
     suspend fun sellingGoodsById(id: Uuid): SellingGoods?
     suspend fun sellingGoodsByName(name: String): List<SellingGoods>
     suspend fun addSellingGoods(sellingGoods: SellingGoods)
-    suspend fun removeSellingGoods(sellingGoods: SellingGoods): Boolean
+    @OptIn(ExperimentalUuidApi::class)
+    suspend fun removeSellingGoods(id: Uuid): Boolean
 }

@@ -1,0 +1,16 @@
+version: "3"
+services:
+  frontend:
+    build: ""
+    ports:
+      - #outbound port: inbound port
+      - "3000:80"
+  sellerManagement:
+    build: ./sellerManagement
+    ports:
+      - "8081:8081"
+  userInformationManagement:
+    build: ./userInformationManagement
+    ports:
+      - "8080:8080"
+# 여기에 kafka 등의 메세징 큐 설정도 들어갈 수 있을 것 같음

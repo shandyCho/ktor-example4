@@ -2,8 +2,24 @@ ktor:
   application:
     modules:
       - com.shandy.ApplicationKt.module
+      - com.shandy.ApplicationKt.sellingGoodsModule
+    #      - com.shandy.domain.sellingGoods.routing.SeiingGoodsRouterKt.sellingGoodsRouter
+#    dependencies:
+#      - com.shandy.domain.sellingGoods.repository.SellingGoodsRepository
+  # deployment 블록에서 서버 엔진에 적용될 설정들을 정의할 수 있다.
   deployment:
     port: 8081
+    # application.yaml 파일 내에서 환경변수를 사용할 수 있다
+#    port: ${PORT} # 혹은 $PORT
+    shutdownTimeout: 3000
+    watch:
+      - classes
+  # security 블록에서 ssl 블록 하위에 SSL 연결 관련 설정을 정의할 수 있다
+#  security:
+#    ssl:
+#      keyAlias: test.jks
+
+## ktor 블록 바깥에서 사용자 정의 설정을 정의할 수 있다
 postgres:
   url: "jdbc:postgresql://192.168.16.1:5432/postgres"
   user: test

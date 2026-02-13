@@ -12,6 +12,7 @@ plugins {
 }
 
 application {
+    // 빌드 시스템 (gradle) 의 작업(task)로 서버를 실행시켜야 하는 경우 EngineMain 을 application의 mainClass 로 지정해야한다
     mainClass = "io.ktor.server.netty.EngineMain"
 }
 

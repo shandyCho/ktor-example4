@@ -1,101 +1,17 @@
 package com.shandy
 
-import com.fasterxml.jackson.databind.*
-import io.ktor.http.*
-import io.ktor.serialization.jackson.*
-import io.ktor.serialization.kotlinx.json.*
+import com.shandy.domain.sellingGoods.repository.SellingGoodsRepository
+import com.shandy.domain.sellingGoods.repository.SellingGoodsRepositoryImpl
 import io.ktor.server.application.*
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.server.config.property
+import io.ktor.server.plugins.di.dependencies
 import java.sql.Connection
-import java.sql.DriverManager
 
 import org.jetbrains.exposed.v1.jdbc.Database
-import org.koin.dsl.module
-import org.koin.ktor.plugin.Koin
-import org.koin.logger.slf4jLogger
 
 fun Application.configureDatabases() {
-    val database = Database.connect(
-        url = "jdbc:postgresql://192.168.16.1:5432/postgres",
-        user = "test",
-        password = "sikbbang2@",
-    )
-    val dbConnection: Connection = connectToPostgres(embedded = true)
-    val cityService = CityService(dbConnection)
-
-    routing {
-
-        // Create city
-        post("/cities") {
-            val city = call.receive<City>()
-            val id = cityService.create(city)
-            call.respond(HttpStatusCode.Created, id)
-        }
-
-        // Read city
-        get("/cities/{id}") {
-            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
-            try {
-                val city = cityService.read(id)
-                call.respond(HttpStatusCode.OK, city)
-            } catch (e: Exception) {
-                call.respond(HttpStatusCode.NotFound)
-            }
-        }
-
-        // Update city
-        put("/cities/{id}") {
-            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
-            val user = call.receive<City>()
-            cityService.update(id, user)
-            call.respond(HttpStatusCode.OK)
-        }
-
-        // Delete city
-        delete("/cities/{id}") {
-            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
-            cityService.delete(id)
-            call.respond(HttpStatusCode.OK)
-        }
-    }
-    val userService = UserService(database)
-    routing {
-        // Create user
-        post("/users") {
-            val user = call.receive<ExposedUser>()
-            val id = userService.create(user)
-            call.respond(HttpStatusCode.Created, id)
-        }
-
-        // Read user
-        get("/users/{id}") {
-            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
-            val user = userService.read(id)
-            if (user != null) {
-                call.respond(HttpStatusCode.OK, user)
-            } else {
-                call.respond(HttpStatusCode.NotFound)
-            }
-        }
-
-        // Update user
-        put("/users/{id}") {
-            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
-            val user = call.receive<ExposedUser>()
-            userService.update(id, user)
-            call.respond(HttpStatusCode.OK)
-        }
-
-        // Delete user
-        delete("/users/{id}") {
-            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
-            userService.delete(id)
-            call.respond(HttpStatusCode.OK)
-        }
-    }
+//    val dbConnection: Connection = connectToPostgres(embedded = true)
+    connectToPostgres(embedded = false)
 }
 
 /**
@@ -116,20 +32,23 @@ fun Application.configureDatabases() {
  * @param embedded -- if [true] defaults to an embedded database for tests that runs locally in the same process.
  * In this case you don't have to provide any parameters in configuration file, and you don't have to run a process.
  *
- * @return [Connection] that represent connection to the database. Please, don't forget to close this connection when
+ * @return [Unit] that represent connection to the database. Please, don't forget to close this connection when
  * your application shuts down by calling [Connection.close]
  * */
-fun Application.connectToPostgres(embedded: Boolean): Connection {
+fun Application.connectToPostgres(embedded: Boolean) {
     Class.forName("org.postgresql.Driver")
     if (embedded) {
         log.info("Using embedded H2 database for testing; replace this flag to use postgres")
-        return DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "root", "")
+//        return DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "root", "")
     } else {
         val url = environment.config.property("postgres.url").getString()
         log.info("Connecting to postgres database at $url")
         val user = environment.config.property("postgres.user").getString()
         val password = environment.config.property("postgres.password").getString()
-
-        return DriverManager.getConnection(url, user, password)
+        Database.connect(
+            url = url,
+            user = user,
+            password = password
+        )
     }
 }
